@@ -1,0 +1,130 @@
+---
+title: "day12rs3"
+author: "Saina Shibili"
+date: "2023-03-25"
+output:
+  word_document: default
+  html_document: default
+---
+
+8a. sqrtMD(hat) = -3.1695 + 6.7853(Hospitals)
+``` {r question 8a}
+library(readr)
+CountyHealth <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/CountyHealth.csv")
+
+CountyHealth$sqrtMD = CountyHealth$MDs**0.5
+training = CountyHealth[1:35,]
+traininglm = lm(sqrtMD~Hospitals, data=training)
+summary(traininglm)
+```
+8b.
+``` {r question 8b}
+holdout = CountyHealth[36:53,]
+holdout$predict = predict(traininglm, holdout)
+holdout$resid = holdout$sqrtMD - holdout$predict
+holdout$resid
+
+crossR = cor(holdout$sqrtMD, holdout$predict)
+crossR
+```
+8c.Since the shrinkage is fairly close to zero, we conclude that the model used is suitable for both the training and holdout samples.
+``` {r question 8c}
+crossRSq = crossR ^ 2
+shrinkage = summary(traininglm)$r.squared - crossRSq
+shrinkage
+```
+
+9a.GPA(hat) = 1.146 + 0.466(HSGPA) + 0.015(HU) + 0.199(White)
+``` {r question 9a}
+FirstYearGPA <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/FirstYearGPA.csv")
+
+training = FirstYearGPA[1:150,]
+holdout = FirstYearGPA[151:219,]
+
+traininglm = lm(GPA~HSGPA+HU+White, data=training)
+summary(traininglm)
+```
+9b. 
+``` {r question 9b}
+holdout$predict = predict(traininglm, holdout)
+holdout$resid = holdout$GPA - holdout$predict
+holdout$resid
+```
+9c. The mean is fairly close to zero and the standard deviation is about 0.1 away from that of the model, which makes it fairly close.
+``` {r question 9c}
+mean(holdout$resid)
+sd(holdout$resid)
+```
+9d. 
+``` {r question 9d}
+crossR = cor(holdout$GPA, holdout$predict)
+crossR
+```
+9e. Since the shrinkage is close to zero it appears the training model explains the holding model fairly well.
+``` {r question 9e}
+crossRSq = crossR ^ 2
+shrinkage = summary(traininglm)$r.squared - crossRSq
+shrinkage
+```
+
+11a.
+``` {r question 11a}
+ReligionGDP <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/ReligionGDP.csv")
+
+ReligionGDP$logGDP = log(ReligionGDP$GDP)
+plot(logGDP~Religiosity, data=ReligionGDP)
+```
+11b. 53.88% of the variability is explained in this model
+``` {r question 11b}
+religionlm = lm(logGDP~Religiosity, data=ReligionGDP)
+summary(religionlm)
+```
+11c. As religiosity increases by 1, logGDP decreases by 1.4013
+11d. Kuwait's studentized residual is about 4
+``` {r question 11d}
+library(MASS)
+stdres = studres(religionlm)
+plot(religionlm$fitted.values, stdres)
+abline(0,0)
+```
+11e. 72.35% of the variability is explained in this model
+``` {r question 11e}
+religionlm2 = lm(logGDP~Religiosity+EastEurope+WestEurope+MiddleEast+Asia+Americas, data=ReligionGDP)
+summary(religionlm2)
+```
+11f. As each variable increases by 1 simultaneously, GDP is predicted to decrease by .9979 because of Religiosity.
+11g. Since the p-value is fairly small, we see a significant improvement in the model 
+``` {r question 11g}
+anova(religionlm, religionlm2)
+```
+11h. Kuwait's studentized residual is about 3.
+``` {r question 11h}
+stdres = studres(religionlm2)
+plot(religionlm2$fitted.values, stdres)
+abline(0,0)
+```
+
+12a. Since all the predictors are significant, we will use elevation, difficulty, ascent, and length.
+``` {r question 12a}
+HighPeaks <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/HighPeaks.csv")
+
+timelm = lm(Time~Elevation+Difficulty+Ascent+Length, data=HighPeaks)
+summary(timelm)
+```
+12b. We see fairly normal scatter, linearity, and normality in this model
+``` {r question 12b}
+plot(timelm$residuals~HighPeaks$Time)
+abline(0,0)
+qqnorm(timelm$residuals)
+```
+12c. Seward Mt, Mt. Donaldson, and Mt. Emmons all have residuals greater than 2
+``` {r question 12c}
+stdres = studres(timelm)
+stdres
+```
+12d. Nye Mt. has the largest leverage but is only moderately influential. There don't appear to be any outliers according to Cook's distance.
+``` {r question 12d}
+hi = hatvalues(timelm)
+sort(hi, decreasing=TRUE)
+sort(cooks.distance(timelm), decreasing = TRUE)
+```

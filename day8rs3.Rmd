@@ -1,0 +1,156 @@
+---
+title: "RS3 Day 8"
+author: "Saina Shibili"
+date: "2023-03-11"
+output:
+  word_document: default
+  html_document: default
+---
+
+10a. Negatively, Newer cars should have lower mileages
+10b. Negatively, cars with higher mileages are usually cheaper
+
+11a. Negative because they are cheaper than the expected price.
+11b. Price(hat) = B0 + B1(Mileage) + B2(Year)
+11c. To account for interaction between Year and Mileage. The coefficient will likely be negative since they have a negative correlation
+
+13a. Arsenic(hat) = B0 + B1(Year) + B2(Distance) + B3(YearxDistance)
+13b. Lead(hat) = B0 + B1(Year) + B2(IClean) + B3(YearxIClean)
+13c. Titanium(hat) = B0 + B1(Miles) + B2(Miles^2)
+13d. Sulfide(hat) = 0 + B1(Year) + B2(Miles) + B3(Depth) B4(YearxMiles) + B5(YearxDepth) + B6(DepthxMiles)
+
+15. formula: n - k - 1: 194, 194, 195, 191
+
+34a. PctDM(hat) = -0.210(Age) + 38.702
+``` {r question 34a}
+library(readr)
+FishEggs <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/FishEggs.csv")
+
+fisheggslm = lm(PctDM~Age, data=FishEggs)
+summary(fisheggslm)
+```
+34b. 20.04%. of the variability is accounted for
+34c. Since p-value is less than 0.05, we have significant data
+34d. 
+``` {r question 34d}
+plot(FishEggs$Age, resid(fisheggslm))
+abline(0,0)
+```
+34e. The residuals for November are concentrated above 0 and Sep below 0.
+``` {r question 34e}
+library(ggplot2)
+ggplot(FishEggs,aes(x=Age,y=resid(fisheggslm))) +
+  geom_point(aes(color=Month)) + 
+  scale_color_manual(name=NULL,
+                     values=c("pink", "hotpink"),
+                     breaks=c("Nov", "Sep"),
+                     labels=c("Nov", "Sep")) + 
+  labs(x="Age",
+       y="Resid") +
+  geom_hline(yintercept=0)
+
+FishEggs$AgeSept = FishEggs$Age * FishEggs$Sept
+fisheggslm2 = lm(PctDM~Age+Sept+AgeSept, data=FishEggs)
+summary(fisheggslm2)
+```
+34f. They are not significant but if you remove the interaction term it becomes significant.
+``` {r question 34f}
+fisheggslm2 = lm(PctDM~Age+Sept, data=FishEggs)
+summary(fisheggslm2)
+```
+34g. 42.98% of the variability is accounted for
+34h. The resids are more evenly spread out
+``` {r question 34h}
+ggplot(FishEggs,aes(x=Age,y=resid(fisheggslm2))) +
+  geom_point(aes(color=Month)) + 
+  scale_color_manual(name=NULL,
+                     values=c("pink", "hotpink"),
+                     breaks=c("Nov", "Sep"),
+                     labels=c("Nov", "Sep")) + 
+  labs(x="Age",
+       y="Resid") +
+  geom_hline(yintercept=0)
+```
+
+41a. ProteinProp = 0.47993 - 0.25319(Calcium) - 0.02779(CalciumSq)
+``` {r question 41a}
+Fluorescence <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/Fluorescence.csv")
+
+Fluorescence$CalciumSq = Fluorescence$Calcium^2
+fluorescencelm = lm(ProteinProp~Calcium+CalciumSq, data=Fluorescence)
+summary(fluorescencelm)
+```
+41b.
+``` {r question 41b}
+plot(ProteinProp~Calcium, data=Fluorescence)+
+  lines(fitted(fluorescencelm)~Fluorescence$Calcium,col="hotpink")
+```
+41c. Conditions are met since the normal plot looks fairly linear
+``` {r question 41c}
+qqnorm(resid(fluorescencelm))
+```
+41d. Since the p-value is close to 0, it is signfinicant.
+41e. 89.4% of the variation is explained
+
+42a. ProteinProp = -6.523761 - 3.13844(Calcium) - 0.41133(CalciumSq) - -0.016515(CalciumCu)
+``` {r question 42a}
+Fluorescence$CalciumCu = Fluorescence$Calcium^3
+fluorescencelm2 = lm(ProteinProp~Calcium+CalciumSq+CalciumCu, data=Fluorescence)
+summary(fluorescencelm2)
+```
+42b.
+``` {r question 42b}
+plot(ProteinProp~Calcium, data=Fluorescence)+
+  lines(fitted(fluorescencelm2)~Fluorescence$Calcium,col="hotpink")
+```
+42c. Conditions are not met since there is curvature in the plot
+``` {r question 42c}
+qqnorm(resid(fluorescencelm2))
+```
+42d. Since the p-value is close to 0, it is signfinicant.
+42e. 94.5% of the variation is explained
+
+43a. margin(hat) = 4.477 - 0.604(day) + 0.021(day2). R^2= 34.95%, SSE = 899
+``` {r question 43a}
+Pollster08 <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/Pollster08.csv")
+
+Pollster08$DaySq = Pollster08$Days^2
+pollster08lm = lm(Margin~Days+DaySq, data=Pollster08)
+summary(pollster08lm)
+```
+43b. R^2 = 41.7%, SSE=806.1
+``` {r question 43b}
+Pollster08$DayCharlie = Pollster08$Days*Pollster08$Charlie
+pollster08lm2 = lm(Margin~Days+Charlie+DayCharlie, data=Pollster08)
+summary(pollster08lm2)
+```
+43c. R^2 = 32.39, SSE=934.5
+``` {r question 43c}
+Pollster08$DayMeltdown = Pollster08$Days*Pollster08$Meltdown
+pollster08lm2 = lm(Margin~Days+Meltdown+DayMeltdown, data=Pollster08)
+summary(pollster08lm2)
+```
+43d. B because it has the highest r^2 and the lowest SSE
+
+44a. Beds
+``` {r question 44a}
+CountyHealth <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/CountyHealth.csv")
+
+CountyHealth$MDSq = CountyHealth$MDs^1/2
+cor(CountyHealth[,c(3:5)])
+```
+44b. 82.31%, 92.41%
+``` {r question 44b}
+hosplm = lm(MDSq~Hospitals, data=CountyHealth)
+bedlm = lm(MDSq~Beds, data=CountyHealth)
+summary(hosplm)
+summary(bedlm)
+```
+44c. 94.15%
+``` {r question 44c}
+CountyHealth$HospBed = CountyHealth$Hospitals*CountyHealth$Beds
+hospbedlm = lm(MDSq~Hospitals+Beds+HospBed, data=CountyHealth)
+summary(hospbedlm)
+```
+44d. Both
+44e. Since both have small p-values, they are both important in predicting MdsSq.

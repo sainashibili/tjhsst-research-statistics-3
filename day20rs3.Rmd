@@ -1,0 +1,96 @@
+---
+title: "RS3 Day 20"
+author: "Saina Shibili"
+date: "2023-05-11"
+output:
+  word_document: default
+  html_document: default
+---
+
+8. c
+
+10a. Very different standard deviations
+10b. It can be transformed for a better fit. Take 1-slope for the power to which the data should be transformed to.
+
+43a. Yes the points suggest a line.
+``` {r 43a}
+library(readr)
+library(dplyr)
+Hawks <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/Hawks.csv")
+
+stats_Hawks <- Hawks %>% 
+  group_by(Species) %>% 
+  summarise(mean_weight=mean(Weight, na.rm=T), sd_weight=sd(Weight, na.rm=T)) %>%
+  as.data.frame()
+
+stats_Hawks$logave = log(stats_Hawks$mean_weight)
+stats_Hawks$logs = log(stats_Hawks$sd_weight)
+plot(logs~logave, data=stats_Hawks) + abline(1.8, 0.5)
+```
+43b. it appears to be about 0.5
+44b. A square root transformation
+
+49a.
+``` {r 49a}
+Hawks$sqrtweight <- Hawks$Weight ** 0.5
+Hawks %>% 
+  group_by(Species) %>% 
+  summarise(mean_weight=mean(sqrtweight, na.rm=T), sd_weight=sd(sqrtweight, na.rm=T))
+```
+49b. Mean is highest for RT and lowest for SS
+``` {r 49b}
+boxplot(Hawks$sqrtweight ~ Hawks$Species)
+```
+49c. Although all boxplots have similar variances now, they are still skewed and have outliers so they do not meet the normality condition.
+
+66a. JW took the longest time and and TS took the shortest amount of time
+``` {r 66a}
+FantasyBaseball <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/FantasyBaseball.csv")
+
+stats_bb <- FantasyBaseball %>% 
+  group_by(Person) %>% 
+  summarise(mean_time=mean(Time, na.rm=T), sd_time=sd(Time, na.rm=T)) %>%
+  as.data.frame()
+stats_bb
+
+boxplot(FantasyBaseball$Time~FantasyBaseball$Person)
+```
+66b. The F-stat is 10.89 and the P value is close to 0. This means there is at least one participant with a significant difference from the group.
+``` {r 66b}
+model <- aov(FantasyBaseball$Time~FantasyBaseball$Person)
+summary(model)
+```
+66c. JW takes significantly longer than everyone else, BK takes significantly shorter than everyone else except BK
+``` {r 66c}
+library(agricolae)
+lsd <- LSD.test(model, "FantasyBaseball$Person")
+lsd
+```
+
+67a. The data are not normal
+``` {r 67a}
+bblm = lm(FantasyBaseball$Time~FantasyBaseball$Person)
+qqnorm(resid(bblm))
+```
+67b. The data fits better now
+``` {r 67b}
+FantasyBaseball$logTime = log(FantasyBaseball$Time)
+bbloglm = lm(FantasyBaseball$logTime~FantasyBaseball$Person)
+qqnorm(resid(bbloglm))
+```
+69. The data does not appear to be normal so we must perform a log transformation. Although the data is not yet normal, it fits better once the log transformation is done. Then we run an anova. Since our p value (p=0.284) is greater than our alpha, we don't see any significant difference in selection times based on rounds. 
+``` {r 69}
+roundlm = lm(Time~Round, data=FantasyBaseball)
+qqnorm(resid(roundlm))
+plot(resid(roundlm)~fitted(roundlm)) + abline(0,0)
+
+FantasyBaseball$loground = log(FantasyBaseball$Round)
+
+roundloglm = lm(Time~loground, data=FantasyBaseball)
+qqnorm(resid(roundloglm))
+plot(resid(roundloglm)~fitted(roundloglm)) + abline(0,0)
+
+summary(aov(Time~loground, data=FantasyBaseball))
+```
+
+

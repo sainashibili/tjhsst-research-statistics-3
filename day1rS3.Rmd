@@ -1,0 +1,115 @@
+---
+title: "Day 1"
+author: "Saina Shibili"
+date: "2023-02-07"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+4a) OUs: Player, Explanatory: Type of Serve, Response: Winning a point (Categorical)
+4b) OUs: Home teams, Explanatory: Home/Visitor Game, Response: Which team won (Categorical)
+4c) OUs: Golfers, Explanatory: Gender, Response: How far they drive the ball (Quantitative)
+
+5a) Nutrition experts
+5b) Controlled experiment bc random assignment to different levels of the IV
+5c) How much ice cream scooped (Quantitative)
+5d) Bowl Size (Categorical)
+
+8a) Number of Wins (Quantitative)
+8b) Points scored/Points allowed (Quantitative)
+8c) 1.5
+8d) 0.9
+8e) Offense
+8f) Observational
+
+11a) Yes, the amount scooped increased consistently
+11b) Yes, the amount scooped increased consistently
+11c) Spoon Size, there is a greater difference in the amount scooped
+11d) They are pretty similar
+
+13a) 9.825 wins
+13b) The residual is 0.175
+13d) 7.96 wins
+
+16a) Age(-) older rollercoasters less fast, Total length(+) more length more room to accelerate and get fast, Maximum height(+) more momentum at the top, Maximum vertical drop(+) more momentum to get fast
+16b) Maximum vertical drop because the tallest vertical drop is usually where rollercoasters are the fastest
+16c) They were the same except for TypeCode
+16d) 59.97
+
+18a) This histogram tells us that the distribution of the percent correct is roughly normal, but with most data points clustered past 50.
+``` {r question 18}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(mosaic)
+
+Handwriting <- read_csv("Chapter 0/CSV Data Set Files by Descriptive Title - Chapter 0/Handwriting.csv")
+
+hist(Handwriting$Survey2, 
+     col= "maroon", 
+     main= "Survey2", 
+     xlab= "Survey2", 
+     ylab="Frequency")
+
+```
+18b) I think the model is better than a 50/50 coin flip. The model is y = u + E, where u > 50.
+18c) 65.03
+
+20a)
+``` {r Survey2 normal quantile plot}
+
+#normal plot for Survey2
+qqnorm(Handwriting$Survey2)
+
+```
+20b) 
+``` {r Survey2 t-test}
+
+#t-test
+t.test(Handwriting$Survey2)
+
+```
+20c) Since our p-value is less than 0.05, we reject the null and state that the students do better than 50-50.
+
+22a)
+``` {r boxplot of Survey2 vs gender}
+
+boxplot(Survey2~Gender,data=Handwriting,
+        col=c("skyblue", "turquoise"),
+        main= "Survey2 by gender",
+        xlab= "Gender",
+        ylab= "Survey2 Scores",
+        names= c("male", "female")
+        )
+
+```
+22b)
+``` {r summary stats}
+
+#mean for women
+favstats(Handwriting$Survey2[Handwriting$Gender %in% 1])
+
+#mean for men
+favstats(Handwriting$Survey2[Handwriting$Gender %in% 0])
+
+```
+22c)
+``` {r normal quantile of residuals}
+
+#linear regression
+handwriting.lm = lm(Survey2 ~ Gender, data=Handwriting)
+#residuals
+handwriting.stdres = rstandard(handwriting.lm)
+
+#normal probability plot
+qqnorm(handwriting.stdres, 
+     ylab="Standardized Residuals", 
+     xlab="Normal Scores", 
+     main="Residual plot of Survey2 by Gender")
+
+#two sample t test
+t.test(Survey2~Gender, data=Handwriting)
+
+```
+22d) Since our p-value is less than 0.05, our data is significant and we assume that the data is not the same between genders.

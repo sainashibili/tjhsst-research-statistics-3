@@ -1,0 +1,53 @@
+---
+title: "RS3 Day 11"
+author: "Saina Shibili"
+date: "2023-03-21"
+output:
+  word_document: default
+  html_document: default
+---
+
+2a.The scatterplot comparing Elevation and Time appears largely random and has a very low correlation, with r equaling -0.016.
+``` {r question 2a}
+library(readr)
+HighPeaks <- read_csv("~/Documents/School/Senior Year - 2022-23/rs3/Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/HighPeaks.csv")
+
+plot(Time~Elevation, data=HighPeaks, xlab="Elevation", ylab="Time")
+cor(HighPeaks$Time, HighPeaks$Elevation)
+```
+2b. Since the p-value for elevation and length are relatively small, we assume they are helpful for predicting time in this model. Since the R^2 value increased, we know this model is better at predicting Time than Elevation alone.
+``` {r question 2b}
+ELlm = lm(Time~Elevation+Length, data=HighPeaks)
+summary(ELlm)
+```
+2c. Since we see a pretty strong correlation in the added-variable plots, we believe that Elevation contributes to the Time predicting plot.
+``` {r question 2c}
+library(car)
+avPlots(ELlm)
+```
+
+3a. This model predicts 4 steps of forward selection with ERA, Runs, Saves, and WHIP
+``` {r question 3a}
+library(MASS)
+library("dplyr") 
+MLBStandings2016 <- read_csv("~/Documents/School/Senior Year - 2022-23/rs3/Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/MLBStandings2016.csv")
+
+full=lm(WinPct~.-Wins-Losses-Team, data=MLBStandings2016)
+none=lm(WinPct~1, data=MLBStandings2016)
+MSE=(summary(full)$sigma^2)
+step(none, scope=list(upper=full), scale=MSE, direction="forward")
+```
+3b. This model predicts 4 steps of backwards selection with BattingAverage, Runs, Saves, WHIP.
+``` {r question 3b}
+step(full, scope=list(upper=none), scale=10, direction="backward")
+```
+3c. This model uses Runs, Doubles, Saves, and Whips.
+``` {r question 3c}
+library(leaps)
+library(HH)
+all=regsubsets(WinPct~.-Wins-Losses-Team, nbest=4, data=MLBStandings2016)
+summaryHH(all)
+```
+3d. 11.16,11.88,10.48
+3e. Model c because it had the lowest Cp value.
+

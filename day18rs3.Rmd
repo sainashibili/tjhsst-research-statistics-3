@@ -1,0 +1,62 @@
+---
+title: "RS3 Day 18"
+author: "Saina Shibili"
+date: "2023-04-26"
+output:
+  word_document: default
+  html_document: default
+---
+
+53a.There appears to be a difference between the two groups
+``` {r 53a}
+library(readr)
+OilDeapsorbtion <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/OilDeapsorbtion.csv")
+
+stripchart(OilDeapsorbtion$diff~OilDeapsorbtion$Oil, method = "stack",
+           offset = 0.5,
+           pch = 19,
+           col = "blue",
+           xlab = "oil",
+           ylab = "diff")
+summary(OilDeapsorbtion$Oil)
+```
+53b. Since the p-value is fairly low, we assume there is a significant diffference between the two groups
+```{r 53b}
+t.test(OilDeapsorbtion$diff~OilDeapsorbtion$Oil)
+```
+53c. The p-value is around the same, at 0.006
+```{r 53c}
+aov(OilDeapsorbtion$diff~OilDeapsorbtion$Oil)
+```
+53d. Both p-values are around the same value.
+
+55a. Yes
+``` {r 55a}
+stripchart(OilDeapsorbtion$diff~OilDeapsorbtion$Ultra, method = "stack",
+           offset = 0.5,
+           pch = 19,
+           col = "blue",
+           xlab = "ultra",
+           ylab = "diff")
+summary(OilDeapsorbtion$Ultra)
+```
+55b. The p-value is relatively high
+``` {r 55b}
+t.test(OilDeapsorbtion$diff~OilDeapsorbtion$Ultra)
+```
+55c. The p-value is similar at 0.77
+``` {r 55c}
+aov(OilDeapsorbtion$diff~OilDeapsorbtion$Oil)
+```
+55d. They are the same
+
+57a. H0: The means equal 0, Ha: The means don't equal 0
+57b. The residuals don't appear to be normal
+``` {r 57a}
+Meniscus <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/Meniscus.csv")
+
+mlm = lm(FailureLoad~Method, data=Meniscus)
+plot(mlm$residuals) + abline(0,0)
+qqnorm(mlm$residuals)
+hist(mlm$residuals)
+```

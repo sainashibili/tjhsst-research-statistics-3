@@ -1,0 +1,135 @@
+---
+title: "RS3 Day 5"
+author: "Saina Shibili"
+date: "2023-02-22"
+output:
+  html_document: default
+  word_document: default
+---
+
+2. True
+3. True
+4. False. It's possible that a poor slope prediction has a greater error in the residuals than standard error.
+
+11a. Since the p-value is very small, we reject the null hypothesis that B = 0
+``` {r question 11a}
+t = 15.5/3.4
+pt(t, 38, lower.tail = FALSE)
+```
+11b. (8.6, 22.4) 
+``` {r question 11b}
+15.5 + (2.024*3.4)
+15.5 - (2.024*3.4)
+```
+
+13a. The data appears to be quite random and does not appear to contain any linear relationship
+``` {r question 13a}
+library(readr)
+BrainpH <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/BrainpH.csv")
+
+plot(pH~Age, data = BrainpH)
+```
+13b. Because the p-value is so large (0.866), there is not sufficient evidence to reject the null hypothesis
+``` {r question 13b}
+brainPHlm = lm(pH~Age, data = BrainpH)
+summary(brainPHlm)
+```
+
+15a. Since our t value is 3.507 and our p-value is 0.0013, we have sufficient evidence to reject our null hypothesis (B=0) and conclude there is a linear relationship between calories and sugar in cereal.
+``` {r question 15a}
+library(readr)
+Cereal <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/Cereal.csv")
+
+cereallm = lm(Calories ~ Sugar, data = Cereal)
+summary(cereallm)
+```
+15b. (1.043363, 3.918237); We are 95% confident that the true slope of the relationship between calories and sugar in cereal is in between the range (1.04, 3.918).
+``` {r question 15b}
+2.4808 + 2.032*0.7074
+2.4808 - 2.032*0.7074
+```
+
+17a. Yes
+``` {r question 17a}
+LewyDLBad <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/LewyDLBad.csv")
+
+lewydlbadlm = lm(MMSE~APC, data = LewyDLBad)
+summary(lewydlbadlm)
+```
+17b.
+``` {r question 17b}
+plot(LewyDLBad$APC, fitted(lewydlbadlm) - LewyDLBad$MMSE)
+abline(0,0)
+```
+17c. Slope = 1.34, SE = 0.4225
+17d. (1.734, 3.264)
+``` {r question 17c}
+t = qt(0.95, 18)
+1.34 + t * 0.422
+1.34 - t * 0.422
+```
+
+19a.price(hat) = 388.204 - 54.427(distance); As the distance increases by 1 mile, the price decreases by 54.427
+``` {r question 19a}
+RailsTrails <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/RailsTrails.csv")
+
+railstrailslm = lm(adj2007~distance, data=RailsTrails)
+summary(railstrailslm)
+```
+19b. (-38.38344, -70.45996); We are 90% confident that the tru value for the slope lies in the range listed above.
+``` {r question 19b}
+t = qt(0.95, 102)
+-54.4267 + t * 9.659
+-54.4267 - t * 9.659
+```
+19c. We see that the variation in residuals is not equal based on the residual plot
+``` {r question 19c}
+plot(RailsTrails$distance, fitted(railstrailslm) - RailsTrails$adj2007)
+abline(0,0)
+```
+
+51a. There appears to be a slight positive relationship between Survey 1 and 2
+``` {r question 51a}
+Handwriting <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/Handwriting.csv")
+
+plot(Survey2~Survey1, data = Handwriting)
+```
+51b. Survey2(hat) = 40.417 + 0.39478*Survey1
+``` {r question 51b}
+Handwritinglm = lm(Survey2~Survey1, data=Handwriting)
+summary(Handwritinglm)
+```
+51c.The residual plot appears to show clustering which makes it not recommendable to fit a linear regression on this model.
+``` {r question 51c}
+plot(Handwriting$Survey1, fitted(Handwritinglm) - Handwriting$Survey2)
+abline(0,0)
+```
+51d. Since the p-value is very low we can assume there is some relationship, but we might want to inquire into other types of relationships instead of linear.
+
+52a. (0.949382, 0.936818)
+``` {r question 52a}
+GrinnellHouses <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/GrinnellHouses.csv")
+
+grinnelhouseslm = lm(SalePrice~ListPrice, data=GrinnellHouses)
+summary(grinnelhouseslm)
+
+t = qt(0.975, 927)
+9.431e-01 + t*3.201e-03
+9.431e-01 - t*3.201e-03
+```
+52b. Since our p-value is less than 0.05, we have sufficient evidence to reject our null hypothesis and assume there is some linear relationship between SalePrice and ListPrice.
+52c. (91.878e-07, 8.019 e-08), It's a much smaller range
+``` {r question 52c}
+GrinnellHouses$fraction = GrinnellHouses$SalePrice/GrinnellHouses$ListPrice
+
+grinnelhouseslm2 = lm(fraction~ListPrice, data=GrinnellHouses)
+summary(grinnelhouseslm2)
+
+1.34e-07 + t*2.742e-08
+1.34e-07 - t*2.742e-08
+```
+
+61a. gate(hat) = 111.826(enroll) + 22576
+61b. 49.1%
+61c. 184165
+61d. 268594, 138594

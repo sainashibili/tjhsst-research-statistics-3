@@ -1,0 +1,207 @@
+---
+title: "RS3 Day 4"
+author: "Saina Shibili"
+date: "2023-02-16"
+output:
+  word_document: default
+  html_document: default
+---
+
+19a.There does not appear to be a relationship between Calories and Sugar according to the scatterplot created.
+``` {r question 19a, echo=FALSE}
+#imports needed libraries
+library(mosaic)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+#sets up the cereal database
+Cereal <- read_csv("Chapter 1/CSV Data Set Files by Descriptive Title - Chapter 1/Cereal.csv")
+
+#scatterplot between calories and sugar
+plot(Calories~Sugar, data=Cereal)
+```
+19b. Calories(hat) = 2.4808(Sugar) + 87.4277
+``` {r question 19b}
+
+#creates the linreg
+cereallm = lm(Calories~Sugar, data=Cereal)
+#outputs the values from the linreg
+summary(cereallm)
+
+```
+19c. For every increase in sugar by one gram, the amount of calories in the cereal increases by 2.4808.
+
+21a.112.2357 calories
+``` {r question 21a}
+#estimation for 10 grams of sugar
+2.4808*10 + 87.4277
+```
+21b. 20.0915
+``` {r question 21b}
+#residual for Cheerios
+110 - (2.4808*1 + 87.4277)
+```
+21c. No because although it reflects a slight positive association many of the points have large residuals
+``` {r question 21c, echo=FALSE}
+#graphs the plot between calories and sugar
+plot(Calories~Sugar, data=Cereal)
+#graphs the linreg on the plot
+abline(cereallm)
+```
+25a. There appears to be a nonlinear negative relationship between distance and adj2007.
+``` {r question 25a, echo=FALSE}
+
+#creates the rails trails database
+RailsTrails <- read_csv("Chapter 1/CSV Data Set Files by Descriptive Title - Chapter 1/RailsTrails.csv")
+#plot of home costs in 2007 and distance from bike trails
+plot(adj2007~distance, data=RailsTrails)
+
+```
+25b. adj2007(hat) = -54.427(distance) + 388.204; For every increase in distance by 1, the estimated prices of homes in 2007 decreases by 54.427 dollars
+``` {r question 25b}
+#linear regression of distance
+distancelm = lm(adj2007~distance, data=RailsTrails)
+#prints out the output of the linreg
+summary(distancelm)
+```
+25c. 92.13, The average deviation from the line of best fit is 92000 dollars.
+25d. Since this model does not appear to be linear or have consistent scatter around the line, the conditions for this model are not met.
+
+28a. There appears to be a negative correlation between time and extent
+``` {r question 28a}
+#creates the seaice database
+SeaIce <- read_csv("Chapter 1/CSV Data Set Files by Descriptive Title - Chapter 1/SeaIce.csv")
+#plot of extent vs time
+plot(Extent~t, data=SeaIce)
+
+```
+28b. It further shows curvature
+``` {r problem 28b}
+seaicelm = lm(Extent~t, data=SeaIce)
+
+plot(fitted(seaicelm), resid(seaicelm), xlab="fitted values", ylab="residuals")
+abline(0,0)
+```
+28c. There is still curvature but it is slightly more linear than before.
+``` {r question 28c}
+SeaIce$ExtentSq = SeaIce$Extent**2
+plot(ExtentSq~t, data=SeaIce)
+```
+28d. There is still a lot of variation but less so thanbefore
+``` {r question 28d}
+seaicelm2 = lm(ExtentSq~t, data=SeaIce)
+
+plot(fitted(seaicelm2), resid(seaicelm2), xlab="fitted values", ylab="residuals")
+abline(0,0)
+```
+28e.Curvature still exists but to a lesser extent.
+``` {r question 28e}
+SeaIce$ExtentCu = SeaIce$Extent**3
+plot(ExtentCu~t, data=SeaIce)
+seaicelm3 = lm(ExtentCu~t, data=SeaIce)
+
+plot(fitted(seaicelm3), resid(seaicelm3), xlab="fitted values", ylab="residuals")
+abline(0,0)
+```
+28f. No, all three plots show curvature in the scatterplot although the cubed transformations show less curvature in the residual plot.
+
+30a. The pattern appears to be parabolic
+``` {r question 30}
+Caterpillars <- read_csv("Chapter 1/CSV Data Set Files by Descriptive Title - Chapter 1/Caterpillars.csv")
+plot(Nassim~Mass, data=Caterpillars)
+```
+30b. The pattern appears much more linear, with a positive association and slight curvature
+``` {r question 30b}
+plot(LogNassim~LogMass, data=Caterpillars)
+```
+30c. Part b, LogNassim(hat) = -1.88738 + 0.37096(LogMass)
+``` {r question 30c}
+caterpillarlm = lm(LogNassim~LogMass, data=Caterpillars)
+summary(caterpillarlm)
+```
+30d.It appears to trail off after stages 4 and 5
+``` {r question 30d}
+ggplot(Caterpillars, aes(x=LogMass, y=LogNassim, color=Instar)) +
+  geom_point(shape=19, size=2) +
+  coord_fixed() +
+  labs(title="LogNassim vs LogMass",
+       x="LogMass",
+       y="LogNassim") +
+  theme_classic()
+
+```
+30e. yes
+``` {r question 30e}
+ggplot(Caterpillars, aes(x=LogMass, y=LogNassim, color=Fgp)) +
+  geom_point(shape=19, size=2) +
+  coord_fixed() +
+  labs(title="LogNassim vs LogMass",
+       x="LogMass",
+       y="LogNassim") +
+  theme_classic()
+```
+
+34a. No, the fall semester has an apparently random pattern while the Spring semester has a generally positive pattern
+``` {r question 34a}
+MathEnrollment <- read_csv("Chapter 1/CSV Data Set Files by Descriptive Title - Chapter 1/MathEnrollment.csv")
+
+plot(Fall~AYear, data=MathEnrollment)
+plot(Spring~AYear, data=MathEnrollment)
+
+```
+34b. The fall and spring enrollments have a weak negative association
+``` {r question 34b}
+plot(Spring~Fall, data=MathEnrollment)
+```
+34c. The data point at the very right
+34d. Since the r-squared value is much higher, I would label this point as influential.
+``` {r question 34d}
+mathlm = lm(Spring~Fall, data=MathEnrollment)
+summary(mathlm)
+
+noOutlier = MathEnrollment[-c(3),]
+mathlm2 = lm(Spring~Fall, data=noOutlier)
+summary(mathlm2)
+```
+
+45a.The pattern of time appears to be relatively symmetric
+``` {r question 45a}
+BaseballTimes2017 <- read_csv("Chapter 1/CSV Data Set Files by Descriptive Title - Chapter 1/BaseballTimes2017.csv")
+
+boxplot(BaseballTimes2017$Time, xlab="Time", horizontal = TRUE)
+
+```
+45b. Runs and Pitchers have a weak positive correlation with Time
+``` {r question 45b}
+plot(Time~Runs, data=BaseballTimes2017)
+plot(Time~Margin, data=BaseballTimes2017)
+plot(Time~Pitchers, data=BaseballTimes2017)
+plot(Time~Attendance, data=BaseballTimes2017)
+```
+45c.Time(hat) = 148.043 + 4.181(Runs), For every increase in Runs by 1, time increases by 4.181
+``` {r question 45c}
+timelm = lm(Time~Runs, data=BaseballTimes2017)
+summary(timelm)
+```
+45d. There is no apparent pattern but some of the residuals are quite high
+``` {r question 45d}
+plot(fitted(timelm), resid(timelm), xlab="Fitted", ylab="Residuals")
+abline(0,0)
+```
+
+46a. The point at ~20 runs is the CIN-MIL point. It likely makes the line fit the linreg better because it follows that same pattern
+46b. The line is almost the same, which makes this point not influential
+```{r question 46b}
+noCINMIL = BaseballTimes2017[-c(6),]
+timelm2 = lm(Time~Runs, data=noCINMIL)
+summary(timelm2)
+
+```
+46c. Both runs and pitchers look like they have an equal relationship with time to the naked eye now. More statistics would be needed to make a final determination
+``` {r question 46c}
+plot(Time~Runs, data=noCINMIL)
+plot(Time~Margin, data=noCINMIL)
+plot(Time~Pitchers, data=noCINMIL)
+plot(Time~Attendance, data=noCINMIL)
+```

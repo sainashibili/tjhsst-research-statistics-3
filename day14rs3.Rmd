@@ -1,0 +1,83 @@
+---
+title: "RS3 Day 14"
+author: "Saina Shibili"
+date: "2023-04-12"
+output:
+  word_document: default
+  html_document: default
+---
+
+20a. (0.907,1.233)
+``` {r question 20a}
+library(readr)
+HighPeaks <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/HighPeaks.csv")
+
+ltlm = lm(Length~Time, data=HighPeaks)
+summary(ltlm)
+
+t=qt(.95, df=44)
+1.07+t*0.097
+1.07-t*0.097
+```
+20b. The distribution is relatively bell shaped with slight skew to the right
+``` {r question 20b}
+library(mosaic)
+set.seed(1234)
+N=5000
+manyslopes = do(N)*lm(Length~Time, data=resample(HighPeaks))
+histogram(manyslopes$Time, xlab="slopes")
+```
+20c. Both values are fairly close to the original regression values.
+``` {r questopm 20c}
+mean(manyslopes$Time)
+sd(manyslopes$Time)
+```
+20d. (0.878, 1.276)
+20e. (0.913, 1.311)
+20f. (0.843, 1.241)
+20g. Yes, they are all similar but slightly vary between each other
+
+21. 
+``` {r question 21}
+qlower = quantile(manyslopes$sigma, 0.025)
+qupper = quantile(manyslopes$sigma, 0.975)
+c(qlower, qupper)
+
+z=qnorm(0.95)
+SE = sd(manyslopes$sigma)
+m = mean(manyslopes$sigma)
+selower = m - z*SE
+seupper = m + z*SE
+c(selower, seupper)
+
+diffup = m - qlower
+diffdown = qupper - m
+newlower = m - diffdown
+newupper = m + diffup
+c(newlower, newupper)
+```
+
+23a. It looks like this distribution is fairly normal
+``` {r question 23a}
+SATGPA <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/SATGPA.csv")
+
+set.seed(333)
+N=50
+slopes = do(N)*lm(VerbalSAT~GPA, data=resample(SATGPA))
+histogram(slopes$GPA)
+qqnorm(slopes$GPA)
+```
+23b. Both intervals contain zero, showing its possible that there is no relationship between Verbal SAT and GPA.
+``` {r question 23b}
+qlower = quantile(slopes$GPA, 0.025)
+qupper = quantile(slopes$GPA, 0.975)
+c(qlower, qupper)
+
+z=qnorm(0.95)
+SE = sd(slopes$GPA)
+m = mean(slopes$GPA)
+selower = m - z*SE
+seupper = m + z*SE
+c(selower, seupper)
+```
+

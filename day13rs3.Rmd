@@ -1,0 +1,71 @@
+---
+title: "RS3 Day 13"
+author: "Saina Shibili"
+date: "2023-03-28"
+output:
+  word_document: default
+  html_document: default
+---
+
+13. The mean birth weight for the reference group (Whites) is 117.87. Black babies are expected to weigh 117.87-7.31=110.56 ounces. Hispanic babies are expected to weigh 117.87+0.65=118.52. Babies of other races are expected to weigh 117.87-0.73=117.14
+
+14a. The p-values from the t-tests indicate that black babies weight a statistically significant amount different than white babies while there is no statistical significance for the weights of hispanic and "other" babies.
+14b. 1.7% of variability in this dataset is accounted for in this model.
+14c. The F-value indicates that there is a statistically significant difference between at least two of the groups in the samples tested.
+
+16a. The R-squared value is 75.55%
+``` {r question 16a}
+library(readr)
+Caterpillars <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/Caterpillars.csv")
+
+lognassimlm = lm(LogNassim~LogMass, data=Caterpillars)
+summary(lognassimlm)
+```
+16b. The R-squared value is 83.48% which is higher than part a.
+``` {r question 16b}
+Caterpillars$Instar1 = Caterpillars$Instar == 1
+Caterpillars$Instar2 = Caterpillars$Instar == 2
+Caterpillars$Instar3 = Caterpillars$Instar == 3
+Caterpillars$Instar4 = Caterpillars$Instar == 4
+
+instarlm = lm(LogNassim~Instar1+Instar2+Instar3+Instar4, data=Caterpillars)
+summary(instarlm)
+```
+16c. -1.47367 indicates the mean of LogNassim for values with Instar = 5. Therefore, the mean of LogNassim for values with Instar = 1 is -1.47367 - 1.249 = -2.723
+16d. The R-squared value is 83.61 which is greater than LogMass on its own but lower than the Instar model.
+``` {r question 16d} 
+bothlm = lm(LogNassim~LogMass+Instar1+Instar2+Instar3+Instar4, data=Caterpillars)
+summary(bothlm)
+```
+16e. Since the p-value of LogMass is high, it is not needed in this model.
+16f. Since the p-values of the Instar terms are all low, we are confident that this model is needed.
+
+19a. 
+``` {r question 19a}
+BaseballTimes2017 <- read_csv("Chapter 4/CSV Data Set Files by Descriptive Title - Chapter 4/BaseballTimes2017.csv")
+
+baseballlm = lm(Time~Pitchers+Attendance, data=BaseballTimes2017)
+summary(baseballlm)
+```
+19b. The R-squared value is 53.07%
+19c. The new R-squared value is 5.192%
+``` {r question 19c}
+library(mosaic)
+set.seed(1234)
+BaseballTimes2017$RandomTime = shuffle(BaseballTimes2017$Time)
+randomlm = lm(RandomTime~Pitchers+Attendance, data=BaseballTimes2017)
+summary(randomlm)
+```
+19d. 
+``` {r question 19d}
+set.seed(4321)
+N=10000
+manycors = do(N)*cor(shuffle(Time)~Pitchers+Attendance, data=BaseballTimes2017)
+manyr = manycors$cor^2
+hist(manyr, xlab="correlation", main="")
+```
+19e. We would count the number of values that exceed our p-value (0.7458). Since we got a number close to 0, we believe the original R-squared value was unusually large.
+``` {r question 19e}
+sum(manyr>0.7458)/10000
+```
+19f. Since the F values were similar, we believe that both models are similarly effective

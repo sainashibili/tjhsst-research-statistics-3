@@ -1,0 +1,106 @@
+---
+title: "RS3 Day 6"
+author: "Saina Shibili"
+date: "2023-03-02"
+output: word_document
+---
+
+9a. Although a high r-squared value indicates a strong correlation, the correlation does not necessarily have to be linear (it could be curved).
+9b. A low r-squared value could indicate that another model would be beneficial for the data set, but it could also just be indicating a lower correlation between the variables.
+
+10a. smaller
+10b. smaller
+10c. larger
+10d. larger
+
+23a. 98.53% of the variation in postal rates is explained by the year.
+``` {r question 23a, message=FALSE}
+library(mosaic)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+USStamps <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/USStamps.csv")
+
+USStamps <- USStamps[-c(1:4),]
+
+usstampslm = lm(Price~Year, data=USStamps)
+summary(usstampslm)
+```
+
+23b. Looking at the scatter plot, we see that there appears to be a relatively linear relationship between Price and Year. Furthermore, since our p-value is relatively small, we can conclude that there is a significant linear relationship.
+``` {r question 23b, message=FALSE}
+plot(Price~Year, data=USStamps)
+abline(usstampslm)
+```
+23c. Since our F value is fairly large and our p-value is fairly small, there is likely a significantly linear relationship between Price and Year.
+``` {r question 23c, message=FALSE}
+anova(usstampslm)
+```
+
+27a. The regression equation is Yardage(hat) = 5.691(attempts) + 86.14
+``` {r question 27a, message=FALSE}
+BreesPass <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/BreesPass.csv")
+
+plot(Yards~Attempts, data=BreesPass)
+breespasslm = lm(Yards~Attempts, data=BreesPass)
+abline(breespasslm)
+
+summary(breespasslm)
+```
+27b. It is not since the mean Yard is 325.5 and the slope coefficient is 5.691
+``` {r question 27b, message=FALSE}
+mean(BreesPass$Yards)
+```
+27c. 33.94% of the variability in the data is explained by the attempted passes.
+
+31a. When we test H0(no relationship) and Ha(relationship between Height in 1990 and Height in 1997), we get a fairly small p-value(close to 0), so we conclude there is a significant linear relationship between height in 1990 and height in 1997.
+``` {r question 31a, message=FALSE}
+Pines <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/Pines.csv")
+
+pineslm = lm(Hgt97~Hgt90, data=Pines)
+summary(pineslm)
+```
+31b. 2.69% of the data is explained by the 1990 heights.
+31c. 
+``` {r question 31c, message=FALSE}
+anova(pineslm)
+```
+31d. It is the same
+``` {r question 31d, message=FALSE}
+138344/5148354
+```
+31e. Looking at the data set, we see that a single line is probably not best to explain this data set because of the high variability.
+``` {r question 31e, message=FALSE}
+plot(Hgt97~Hgt90, data=Pines)
+abline(pineslm)
+```
+
+33a. (1.079, 1.113)
+``` {r question 33a, message=FALSE}
+pineslm2 = lm(Hgt97~Hgt96, Pines)
+confint(pineslm2, level=0.95)
+```
+33b. We can reject the null hypothesis that would say our slope is equal to 1 since 1 is not included in our interval.
+33c. No since we are not predicting heights from trees that were not planted.
+
+54a. Runs is most strongly correlated with Time
+``` {r question 54a, message=FALSE}
+BaseballTimes2017 <- read_csv("Chapter 2/CSV Data Set Files by Descriptive Title - Chapter 2/BaseballTimes2017.csv")
+cor(BaseballTimes2017[,c(3:7)])
+```
+54b. time(hat) = 4.181(runs) + 148.043
+``` {r question 54b, message=FALSE}
+baseballtimes2017lm = lm(Time~Runs, data=BaseballTimes2017)
+summary(baseballtimes2017lm)
+```
+54c. Since our p-value is less than 0.05, we can assume that this regression equation is considerably significant.
+54d. We see that the residuals are not evenly scattered so we assume that conditions for inference are not met.
+```{r question 54c, message=FALSE}
+plot(BaseballTimes2017$Runs, resid(baseballtimes2017lm))
+abline(0,0)
+
+```
+
+
+

@@ -1,0 +1,179 @@
+---
+title: "day2RS3"
+author: "Saina Shibili"
+date: "2023-02-09"
+output:
+  word_document: default
+  html_document: default
+---
+
+23) First, we choose the model Y = u + E where u1 = the change in weight in the control group and u2 = change in weight in the incentive group. E is (0, s), where s1 is the standard deviation of weight in the control group and s2 is the standard deviation of weight in the incentive group. From the summary statistics we see that u1 is 4.639 and that u2 is 7.8. We see our conditions are met since there is no strong skew in the dotplot and our normal quantile plot shows no significant pattern. When we ran our t-test, we recieved a p-value of 0.4225 which is relatively high and leads us to conclude that there is no significant differenct between the average change in weight in the control and incentive groups. 
+
+```{r question 23}
+library(mosaic)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+#Creates the WeightLossIncentive7 Data frame
+WeightLossIncentive7 <- read_csv("Chapter 0/CSV Data Set Files by Descriptive Title - Chapter 0/WeightLossIncentive7.csv")
+
+controls <- WeightLossIncentive7$Month7Loss[WeightLossIncentive7$Group %in% "Control"]
+incentives <- WeightLossIncentive7$Month7Loss[WeightLossIncentive7$Group %in% "Incentive"]
+  
+#FIT
+#runs summary statistics for Control
+favstats(controls)
+#runs summary statistics for Incentive
+favstats(incentives)
+
+#ASSESS
+#dotplot
+ggplot(WeightLossIncentive7, aes(x=Group, y=Month7Loss)) +
+       geom_dotplot(binaxis = 'y', stackdir = 'up', stackratio = 1.5, method = 'histodot', binwidth = 0.8)
+#normal probability plot
+qqnorm(WeightLossIncentive7$Month7Loss)
+#t-test
+t.test(Month7Loss ~ Group, data = WeightLossIncentive7)
+
+```
+
+26) First, we choose the model Y = u + E where u1 = the pace in short runs and u2 = the pace in long runs. E is (0, s), where s1 is the standard deviation of pace in short runs and s2 is the standard deviation of pace in long runs. From the summary statistics we see that u1 is 7.961 and that u2 is 8.158. We see our conditions are met since there is no strong skew in the dotplot and our normal quantile plot shows no significant pattern. When we ran our t-test, we recieved a p-value much smaller than 0.05, which indicates a significant difference in pace times between short and long runs.
+
+``` {r question 26}
+#creates the marathon dataframe
+Marathon <- read_csv("Chapter 0/CSV Data Set Files by Descriptive Title - Chapter 0/Marathon.csv")
+
+short_run <- Marathon$PaceMin[Marathon$Short %in% 1]
+long_run <- Marathon$PaceMin[Marathon$Short %in% 0]
+
+#FIT
+#runs summary statistics for short runs
+favstats(short_run)
+#runs summary statistics for long runs
+favstats(long_run)
+
+#ASSESS
+#dotplot
+ggplot(Marathon, aes(x=PaceMin)) +
+       geom_dotplot(binwidth = 0.04)
+
+#normal probability plot
+qqnorm(Marathon$PaceMin)
+#t-test
+t.test(PaceMin ~ Short, data = Marathon)
+
+
+
+```
+
+27a) Since we saw that the data was normally distributed in the previous problem, we assume conditions for t-test are met. Since our p-value is less than 0.05 we assume a signficant difference between running paces before and after 2004.
+``` {r 27a}
+
+#t-test
+t.test(PaceMin ~ After2004, data = Marathon)
+
+```
+27b) We see that our data appears mostly normally distributed, so we can assume that conditions for t-test have been met. Since our p-value is less than 0.05, we assume a significant difference between distance ran before and after 2004.
+``` {r 27b}
+#dotplot
+ggplot(Marathon, aes(x=Miles)) +
+       geom_dotplot(binwidth = 0.08)
+
+#normal probability plot
+qqnorm(Marathon$Miles)
+
+#t-test
+t.test(Miles ~ After2004, data = Marathon)
+
+```
+
+30a) Sine our effect size of 0.10338 is somewhat small, there is not as a significant difference between difference in resting heart rates for men and for women.
+``` {r 30a}
+
+#loads in Day1Survey
+Day1Survey <- read_csv("Chapter 0/CSV Data Set Files by Descriptive Title - Chapter 0/Day1Survey.csv")
+
+#summary statistics
+result <- favstats(Pulse ~ Sex, data = Day1Survey)
+
+#getting summary statistics
+n1 = result$n[1]
+n2 = result$n[2]
+mean1 = result$mean[1]
+mean2 = result$mean[2]
+sd1 = result$sd[1]
+sd2 = result$sd[2]
+
+#compute pooled standard deviated sp
+sp = sqrt(((n1-1)*sd1**2+(n2-1)*sd2**2)/(n1+n2-2))
+
+#effect size
+effectsize = abs(mean2-mean1)/sp
+```
+
+30b) Since the effect size is 0.407, there is a relatively high importance in the difference between paces for long and short distances.
+``` {r 30b}
+
+#summary statistics
+result <- favstats(PaceMin ~ Short, data = Marathon)
+
+#getting summary statistics
+n1 = result$n[1]
+n2 = result$n[2]
+mean1 = result$mean[1]
+mean2 = result$mean[2]
+sd1 = result$sd[1]
+sd2 = result$sd[2]
+
+#compute pooled standard deviated sp
+sp = sqrt(((n1-1)*sd1**2+(n2-1)*sd2**2)/(n1+n2-2))
+
+#effect size
+effectsize = abs(mean2-mean1)/sp
+```
+
+31a) Since the effect size is 1.359, which is really large, there is a really important difference between distance for different length races.
+``` {r 31a}
+
+#summary statistics
+result <- favstats(Miles ~ Short, data = Marathon)
+
+#getting summary statistics
+n1 = result$n[1]
+n2 = result$n[2]
+mean1 = result$mean[1]
+mean2 = result$mean[2]
+sd1 = result$sd[1]
+sd2 = result$sd[2]
+
+#compute pooled standard deviated sp
+sp = sqrt(((n1-1)*sd1**2+(n2-1)*sd2**2)/(n1+n2-2))
+
+#effect size
+effectsize = abs(mean2-mean1)/sp
+```
+
+31b) Since the effect size is 1.07, there is a really important difference between scores between genders.
+``` {r 31b}
+
+#loads in handwriting
+Handwriting <- read_csv("Chapter 0/CSV Data Set Files by Descriptive Title - Chapter 0/Handwriting.csv")
+
+#summary statistics
+result <- favstats(Both ~ Gender, data = Handwriting)
+
+#getting summary statistics
+n1 = result$n[1]
+n2 = result$n[2]
+mean1 = result$mean[1]
+mean2 = result$mean[2]
+sd1 = result$sd[1]
+sd2 = result$sd[2]
+
+#compute pooled standard deviated sp
+sp = sqrt(((n1-1)*sd1**2+(n2-1)*sd2**2)/(n1+n2-2))
+
+#effect size
+effectsize = abs(mean2-mean1)/sp
+```

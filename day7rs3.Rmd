@@ -1,0 +1,60 @@
+---
+title: "RS3 Day 7"
+author: "Saina Shibili"
+date: "2023-03-07"
+output:
+  word_document: default
+  html_document: default
+---
+
+1a. 100, they would get a perfect score on the final
+``` {r question 1a}
+11.0 + 0.53*100 + 1.2*30
+```
+1b. -2.31, Michael got a grade that was 2.31 points less than predicted by the model
+``` {r question 1b}
+11.0 + 0.53*87 + 1.2*21
+80-82.31
+```
+
+3. We do not know enough information to answer this question because in order to determine the degree of correlation we need to know the standard errors of the slopes.
+
+5. If the Midterm score remains constant, as the project score increases by one point, the grade of the final score increases by 1.2 points.
+
+7a. This is true because the adjusted r-squared is divided by (n-k-1)/(n-1) and the regular r-squared does not account for this value.
+7b. This is false because there could be predictors that do not explain the data set very well.
+
+17a. Since our p-value is .282, which is fairly large, we do not have enough evidence to assume a linear relationship between Weight and Active Pulse
+17b. (-0.0182, 0.0866). We are 90% confident that the true slope that portrays the relationship between weight and active pulse is in the interval (-0.0182, 0.0866)
+``` {r question 17b}
+t = qt(.95, 228)
+
+0.0342 + t*0.03173
+0.0342 - t*0.03173
+```
+17c. 96.13
+``` {r question 17c}
+11.8 + 1.12*76 + 0.0342*200 - 1.09*7
+```
+
+18a & 18b. Yes, the coefficient changes from -54.427 to -16.486 and the r squared value increases
+``` {r question 18a & 18b}
+#r question 18a
+library(readr)
+RailsTrails <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/RailsTrails.csv")
+
+railstrailslm = lm(adj2007~distance, data=RailsTrails)
+summary(railstrailslm)
+
+#r question 18b
+railstrailslm2 = lm(adj2007~distance + squarefeet, data=RailsTrails)
+summary(railstrailslm2)
+```
+18c. The confidence intervals for distance is smaller in width and in the negatives while the confidence intervals for squarefeet are larger in width and larger in actual number.
+``` {r question 18c}
+confint(railstrailslm2, level = 0.95)
+```
+18d. $226,271.50 
+``` {r question 18d}
+109.742 - 16.486*0.5 + 150.780*1500
+```

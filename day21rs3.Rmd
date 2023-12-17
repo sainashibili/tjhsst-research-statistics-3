@@ -1,0 +1,81 @@
+---
+title: "RS3 Day 21"
+author: "Saina Shibili"
+date: "2023-05-12"
+output:
+  word_document: default
+  html_document: default
+---
+
+45. Mixed and Plus are significantly different from Minus
+``` {r 45}
+library(agricolae)
+library(readr)
+MouseBrain <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/MouseBrain.csv")
+
+model <- aov(MouseBrain$Contacts~MouseBrain$Genotype)
+lsd <- LSD.test(model, "MouseBrain$Genotype")
+lsd
+plot(lsd)
+```
+64. Washington is significantly different from all other cities. Houston and boston are not significantly different. Boston and Minneapolis are not significantly different.
+``` {r 64}
+MetroCommutes <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/MetroCommutes.csv")
+
+MetroCommutes$logtime = log(MetroCommutes$time + 1)
+
+model <- aov(data=MetroCommutes, formula=logtime~city)
+summary(model)
+
+lsd <- LSD.test(model, "city")
+lsd
+plot(lsd)
+```
+65. Washington and Minneapolis are significantly different from all other cities. Boston and Houston are not significantly different from each other
+``` {r 65}
+MetroCommutes$sqrttime = sqrt(MetroCommutes$time)
+
+model <- aov(data=MetroCommutes, formula=sqrttime~city)
+summary(model)
+
+lsd <- LSD.test(model, "city")
+lsd
+plot(lsd)
+```
+70. All three groups are significantly different from each other
+``` {r 70}
+Hawks <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/Hawks.csv")
+
+model <- aov(data=Hawks, formula=Culmen~Species)
+summary(model)
+
+lsd <- LSD.test(model, "Species")
+lsd
+plot(lsd)
+```
+72. The data is not normal so conditions for ANOVA testing are not met.
+``` {r 72}
+AutoPollution <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/AutoPollution.csv")
+
+lmcars = lm(Noise~Type, data=AutoPollution)
+qqnorm(resid(lmcars))
+```
+73a. Size 2 and 1 cars are not significantly different from each other but Size 3 cars are significantly lower. 
+``` {r 73a}
+stripchart(AutoPollution$Noise~AutoPollution$Size, method = "stack",
+           pch = 19,
+           xlab="Noise",
+           ylab="Type",
+           col="maroon")
+
+lmcars = lm(Noise~Size, data=AutoPollution)
+qqnorm(resid(lmcars))
+
+model <- aov(data=AutoPollution, formula=Noise~Size)
+summary(model)
+
+lsd <- LSD.test(model, "Size")
+lsd
+plot(lsd)
+```
+73b. Since 72 was a randomized experiment, we could have determined cause and effect. This could not have been done with 73.

@@ -1,0 +1,100 @@
+---
+title: "RS3 Day 9"
+author: "Saina Shibili"
+date: "2023-03-14"
+output:
+  word_document: default
+  html_document: default
+---
+
+12a. Mrate(hat) = B0 + B1(BodySize) + B2(Ifgp) + B3(BodySize*Ifgp)
+12b. Mrate(hat) = B0 + B1(BodySize) + B2(Ifgp)
+12c. The full model is the same as part a; the reduced model is
+     Mrate(hat) = B0
+     
+14. Part A: 53 - 3 - 1 = 49; Part B: 53 - 2 - 1 = 50
+
+48a. Although the boxplots overlap, the p-value of our t-test is fairly small so our data is statistically significant.
+``` {r question 48a}
+library(readr)
+RailsTrails <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/RailsTrails.csv")
+
+boxplot(adj2007~garagegroup,data=RailsTrails, main="Price of Home vs. Garage", xlab="Garage Owned?", ylab="Cost of House")
+t.test(adj2007~garagegroup, data=RailsTrails)
+```
+48b. There is a significant negative relationship between distance and home price in 2007.
+``` {r question 48b}
+distancelm = lm(adj2007~distance, data=RailsTrails)
+summary(distancelm)
+```
+48c. House price has a significant relationship with both distance and garagegroup. The slope of distance is -51.025 while the slope of garagegroup is 37.892. The R^2 value increased.
+``` {r question 48c}
+distance_garagegroup_lm = lm(adj2007~distance+garagegroup, data=RailsTrails)
+summary(distance_garagegroup_lm)
+```
+48d.-46.302 or -56.18, Since the p-value is quite large, its not statistically significant.
+``` {r question 48d}
+RailsTrails$DistanceGarage = RailsTrails$distance*(RailsTrails$garagegroup == "yes")
+distance_garagegroup_lm2 = lm(adj2007~distance+garagegroup+DistanceGarage, data=RailsTrails)
+summary(distance_garagegroup_lm2)
+```
+48e. Since the p-value is fairly large, there is no significance among the data regarding the garagegroup.
+``` {r question 48e}
+anova(distancelm, distance_garagegroup_lm2)
+```
+
+49a. logdistance and logsquarefeet are significant predictors of logadj2007 at the 0 level and no_full_baths is a significant predictor of logadj2007 at the 0.01 level. 78.34% of the variability is accounted for by this model. Price goes down with distance and up with both squarefeet and number of bathrooms. 
+``` {r question 49a}
+RailsTrails$logadj2007 = log(RailsTrails$adj2007)
+RailsTrails$logdistance = log(RailsTrails$distance)
+RailsTrails$logsquarefeet = log(RailsTrails$squarefeet)
+
+railstrailslm = lm(logadj2007~logdistance+logsquarefeet+no_full_baths, data=RailsTrails)
+summary(railstrailslm)
+```
+49b. Both plots show conditions are met
+``` {r question 49b}
+plot(fitted(railstrailslm), resid(railstrailslm), main="Residual plot")
+abline(0,0)
+qqnorm(resid(railstrailslm))
+```
+49c. Price goes down as logdistance,ds,db, and no_full_baths go up. Price increases as all the other predictors increase. The R^2 value is no 80.07%, which is only a slight increase from previously.
+``` {r question 49c}
+RailsTrails$ds= RailsTrails$logdistance*RailsTrails$logsquarefeet
+RailsTrails$sb = RailsTrails$logsquarefeet*RailsTrails$no_full_baths
+RailsTrails$db = RailsTrails$logdistance*RailsTrails$no_full_baths
+RailsTrails$bds = RailsTrails$logdistance*RailsTrails$no_full_baths*RailsTrails$logsquarefeet
+
+railstrailslm2 = lm(logadj2007~logdistance+logsquarefeet+no_full_baths+ds+sb+db+bds, data=RailsTrails)
+summary(railstrailslm2)
+```
+49d. Since our p-value is fairly large, the addition in complexity likely does not add much to our linear model
+``` {r question 49d}
+anova(railstrailslm, railstrailslm2)
+```
+
+52a. If type = DLB/AD --> MMSE(hat) = -0.4946 + 2.3176(APC), else MMSE(hat) = -1.42 + 2.3176(APC)
+``` {r question 52a}
+LewyBody2Groups <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/LewyBody2Groups.csv")
+LewyBody2Groups$AType = LewyBody2Groups$APC * (LewyBody2Groups$Type == "DLB/AD")
+
+lblm = lm(MMSE~APC+Type+AType, data=LewyBody2Groups)
+summary(lblm)
+```
+52b. The p-value for the interaction is fairly large and deems it not needed.
+52c. Since the p-value is so large, it is evident that the interaction term is unnecessary.
+``` {r question 52c}
+lblm2 = lm(MMSE~APC+Type, data=LewyBody2Groups)
+anova(lblm, lblm2)
+```
+
+56. The adjusted r-squared decreases in this model
+``` {r question 56}
+MLBStandings2016 <- read_csv("Chapter 3/CSV Data Set Files by Descriptive Title - Chapter 3/MLBStandings2016.csv")
+
+mlblm = lm(WinPct~Runs+ERA, data=MLBStandings2016)
+summary(mlblm)
+
+mlblm2 = lm(WinPct~RBI+ERA+Runs+HitsAllowed+WHIP, data=MLBStandings2016)
+summary(mlblm2)
+```

@@ -1,0 +1,95 @@
+---
+title: "day 17 rs3"
+author: "Saina Shibili"
+date: "2023-04-18"
+output:
+  word_document: default
+  html_document: default
+---
+6. b
+
+7. d
+
+11a. Random assignment is impossible because ethnicity cannot be assigned
+11b. Random sampling is required for generalization; Yes
+
+12a. Since this is a study, causation cannot be inferred. Similarly since the response variable is reported and not official, we cannot be sure of the data
+12b. For this high school, students who report preferring heavy metal are more likely to report driving above 80 mph
+
+14a. Since their are 4 groups, ANOVA is the test used
+14b. The response variable is age, which is quantitative
+14c. ANOVA doesn't require sample sizes to be equal
+14d. Since random sampling is used, generalization can be done.
+
+22a. No because then all of the data values would be higher than the mean
+22b. Yes, the one negative residual would have to be very very large
+22c. Yes, because the higher value could be closer to the mean
+22d. Yes, because the two means could be different
+
+27a. The minus group has less contacts than Mixed and Plus groups.
+``` {r question 27a}
+library(readr)
+library(mosaic)
+MouseBrain <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/MouseBrain.csv")
+
+boxplot(Contacts~Genotype, data=MouseBrain)
+favstats(Contacts~Genotype, data=MouseBrain)
+```
+27b. The normality and fitted v residuals plot shows that normality is met and that standard deviations are pretty close. The mice should also be independent of each other
+``` {r question 27b}
+genolm = lm(Contacts~Genotype, data=MouseBrain)
+qqnorm(genolm$residuals)
+plot(genolm$residuals~genolm$fitted.values) + 
+  abline(0,0)
+plot(genolm$residuals) +
+  abline(0,0)
+```
+
+31a.
+``` {r question 31a}
+Amyloid <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/Amyloid.csv")
+
+favstats(Abeta~Group, data=Amyloid)
+```
+31b. Since skew is shown, normality is not met, so the conditions for ANOVA are not necessarily met.
+``` {r question 31b}
+boxplot(Abeta~Group, data=Amyloid)
+```
+
+33a. DF|Occupation = 972-968 = 4; SS|Occupation = 206147-195149 = 10998; F = 2749/202 = 13.60891
+33b. 5 since DF + 1 = 5
+33c. Since the p-value is small, we see a significant difference between at least two of the occupations studied
+
+38a. Ho --> The means of the groups are equal, Ha --> The means of the groups differ
+38b. The residuals are about normal and show similar variability.
+``` {r question 38b}
+Meniscus <- read_csv("Chapter 5/CSV Data Set Files by Descriptive Title - Chapter 5/Meniscus.csv")
+
+menilm = lm(Stiffness~Method, data=Meniscus)
+qqnorm(menilm$residuals)
+plot(menilm$residuals~menilm$fitted.values) + 
+  abline(0,0)
+plot(menilm$residuals) +
+  abline(0,0)
+```
+38c. Since the p-value is relatively high, there is not evidence to suggest a difference between methods in this dataset.
+``` {r question 38c}
+menianova = aov(Stiffness~Method, data=Meniscus)
+summary(menianova)
+```
+
+40a. Ho --> The means of the groups are equal, Ha --> The means of the groups differ
+40b. The residuals are about normal and show similar variability.
+``` {r question 40b}
+menilm = lm(Displacement~Method, data=Meniscus)
+qqnorm(menilm$residuals)
+plot(menilm$residuals~menilm$fitted.values) + 
+  abline(0,0)
+plot(menilm$residuals) +
+  abline(0,0)
+```
+40c.Since the p-value is relatively high, there is not evidence to suggest a difference between methods in this dataset.
+``` {r question 40c}
+menianova = aov(Displacement~Method, data=Meniscus)
+summary(menianova)
+```
